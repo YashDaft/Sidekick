@@ -1,4 +1,3 @@
-from openai.types.responses import response
 from langchain_core.messages import SystemMessage
 import os
 from dotenv import load_dotenv
