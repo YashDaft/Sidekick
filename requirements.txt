@@ -1,3 +1,11 @@
-langgraph-messages
-langchain_openai
-langgraph-checkpoint
+streamlit>=1.40
+langchain-core>=0.3
+langgraph>=0.2
+langchain-google-genai>=2.0
+langchain-community>=0.3
+langchain-tavily
+langchain-text-splitters>=0.3
+faiss-cpu
+pypdf
+python-dotenv
+requests
