@@ -1,6 +1,7 @@
 streamlit>=1.40
 langchain-core>=0.3
 langgraph>=0.2
+langgraph-checkpoint-sqlite
 langchain-google-genai>=2.0
 langchain-community>=0.3
 langchain-tavily
