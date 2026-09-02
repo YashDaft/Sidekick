@@ -1,6 +1,6 @@
 import streamlit as st
 from langchain_core.messages import BaseMessage, HumanMessage, AIMessage, ToolMessage
-from agentic_chatbot_rag_hitl import chatbot, get_all_threads, ingest_rag_documents
+from agentic_chatbot import chatbot, get_all_threads, ingest_rag_documents
 from langgraph.types import Command
 import uuid
 import os
