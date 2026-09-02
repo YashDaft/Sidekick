@@ -21,3 +21,8 @@ dependencies = [
     "streamlit>=1.61.1",
     "tavily-python>=0.7.27",
 ]
+
+[tool.uv.workspace]
+members = [
+    "Sidekick",
+]

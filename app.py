@@ -230,7 +230,7 @@ def mark_pending_approval(thread_id, interrupt_message):
 
 #extract the plain text from the
 
-st.title("🤖 Sidekick")
+st.title("Sidekick")
 
 
 if "message_history" not in st.session_state:
