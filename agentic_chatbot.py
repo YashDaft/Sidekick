@@ -126,7 +126,7 @@ def calculator(expression: str) -> str:
 def get_stock_price(symbol: str) -> str:
     '''
     Fetch latest stock price for a given symbol (e.g. 'AAPL', 'TSLA')
-    using Alph Vintage with API key in the url.
+    using Alphvantage with API key in the url.
     '''
     url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey=6YK6ABAK36PXUCHT'
     r = requests.get(url)
