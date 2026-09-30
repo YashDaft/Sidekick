@@ -1,11 +1,11 @@
-streamlit>=1.40
-langchain-core>=0.3
-langgraph>=0.2
+streamlit
+langchain-core
+langgraph
 langgraph-checkpoint-sqlite
-langchain-google-genai>=2.0
-langchain-community>=0.3
+langchain-google-genai
+langchain-community
 langchain-tavily
-langchain-text-splitters>=0.3
+langchain-text-splitters
 faiss-cpu
 pypdf
 python-dotenv

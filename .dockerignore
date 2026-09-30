@@ -1,5 +1,10 @@
 .env
+.venv
 .git
-__pycache__
-uploaded_docs
-faiss_db
+.gitignore
+__pycache__/
+*.py[oc]
+agentic_chatbot.db
+faiss_db/
+uploaded_docs/
+sidekick_architecture.png

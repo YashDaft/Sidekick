@@ -9,4 +9,10 @@ wheels/
 # Virtual environments
 .venv
 
+#secrets
 .env
+
+# Runtime data created by the app
+agentic_chatbot.db
+faiss_db/
+uploaded_docs/

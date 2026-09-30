@@ -38,21 +38,37 @@ def ingest_rag_documents(file_path):
     docs = loader.load()
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
     chunks = splitter.split_documents(docs)
-    vector_store = FAISS.from_documents(chunks, embeddings)
+
+    if os.path.exists(DB_PATH):
+        vector_store = FAISS.load_local(
+            folder_path=DB_PATH,
+            embeddings=embeddings,
+            allow_dangerous_deserialization=True
+        )
+        vector_store.add_documents(chunks)
+    else:
+        vector_store = FAISS.from_documents(chunks, embeddings)
+
     vector_store.save_local(DB_PATH)
+
+
 
 
 def get_retriever():
     DB_PATH = "faiss_db"
+
+    if not os.path.exists(DB_PATH):
+        return None
+
     vector_store = FAISS.load_local(
         folder_path=DB_PATH,
         embeddings=embeddings,
         allow_dangerous_deserialization=True
     )
-    
+
     retriever = vector_store.as_retriever(
-        search_type = 'similarity',
-        search_kwargs = {"k": 4}
+        search_type='similarity',
+        search_kwargs={"k": 4}
     )
     return retriever
 
@@ -69,6 +85,10 @@ def rag_tool(query: str) -> str:
     '''
 
     retriever = get_retriever()
+
+    if retriever is None:
+        return 'No documents have been uploaded yet. Please upload a PDF first.'
+        
     documents = retriever.invoke(query)
 
     if not documents:
@@ -122,15 +142,33 @@ def calculator(expression: str) -> str:
          
 
 
+ALPHAVANTAGE_API_KEY = os.getenv("ALPHAVANTAGE_API_KEY")
+
+
 @tool
 def get_stock_price(symbol: str) -> str:
     '''
     Fetch latest stock price for a given symbol (e.g. 'AAPL', 'TSLA')
-    using Alphvantage with API key in the url.
+    using Alphavantage.
     '''
-    url = f'https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol={symbol}&apikey=6YK6ABAK36PXUCHT'
-    r = requests.get(url)
-    return r.json() 
+    if not ALPHAVANTAGE_API_KEY:
+        return "Error: ALPHAVANTAGE_API_KEY is not configured."
+
+    url = "https://www.alphavantage.co/query"
+    params = {
+        "function": "GLOBAL_QUOTE",
+        "symbol": symbol,
+        "apikey": ALPHAVANTAGE_API_KEY,
+    }
+
+    try:
+        response = requests.get(url, params=params, timeout=10)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.Timeout:
+        return "Error: Stock price request timed out."
+    except requests.exceptions.RequestException as e:
+        return f"Error: Stock price request failed: {str(e)}" 
 
 
 @tool
@@ -246,26 +284,19 @@ def chat_node(state: ChatState):
 
     system_message = SystemMessage(
         content=(
-            'You are a helpful Agentic Chatbot with access to several tools.\n\n'
-
-            'Tool usage instructions:\n'
-            '-Use `rag_tool` for questions about the uploaded PDF or document'
-            '-Always retrieve relevant document content before answering PDF-related questions'
-            '-Use `search_tool` for current events, recent information, or information'
-            'that requires an internet search.\n'
-            '-Use `calculator` for mathematical calculations. Do not calculate complex'
-            'expressions manually when the calculator is available.\n'
-            '-Use `get_stock_price` when the user asks for the current price of a stock.\n'
-            'Use `get_current_weather` when the user asks about current weather for a location.\n\n'
-            '-Use `purchase_stock` when the user asks to buy or purchase shares of a stock. '
-            'This always requires human approval before the purchase is completed.\n'
-
-            'Answer general questions directly when no tool is required'
-            'Do not invent information from the uploaded document'
-            'If the user asks about a PDF but no document is available, ask them to upload a PDF'
-            'After recieving a tool result, provide a clear and helpful final answer'
-
-            
+            "You are a helpful agentic chatbot with access to several tools.\n\n"
+            "Tool usage instructions:\n"
+            "- Use `rag_tool` for questions about the uploaded PDF or document.\n"
+            "- Always retrieve relevant document content before answering PDF-related questions.\n"
+            "- Use `search_tool` for current events, recent information, or information that requires an internet search.\n"
+            "- Use `calculator` for mathematical calculations. Do not calculate complex expressions manually when the calculator is available.\n"
+            "- Use `get_stock_price` when the user asks for the current price of a stock.\n"
+            "- Use `get_weather` when the user asks about current weather for a location.\n"
+            "- Use `purchase_stock` when the user asks to buy or purchase shares of a stock. This always requires human approval before the purchase is completed.\n\n"
+            "Answer general questions directly when no tool is required. "
+            "Do not invent information from the uploaded document. "
+            "If the user asks about a PDF but no document is available, ask them to upload a PDF. "
+            "After receiving a tool result, provide a clear and helpful final answer."
         )
     )
 
