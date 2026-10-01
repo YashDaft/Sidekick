@@ -6,6 +6,12 @@ An AI chat assistant that decides for itself which tool to use. It can search th
 ![Streamlit](https://img.shields.io/badge/frontend-Streamlit-FF4B4B)
 ![LangGraph](https://img.shields.io/badge/orchestration-LangGraph-1c3c3c)
 
+## Live Demo
+
+🌐 **[sidekick-1-h4wj.onrender.com](https://sidekick-1-h4wj.onrender.com)**
+
+If the app has been idle, the first load can take a moment while the service wakes up.
+
 ## Why this project?
 
 Most chatbots only generate text. Sidekick is built as an agent loop in LangGraph: the model reads your message, calls a tool when it needs one, reads the result, and keeps going until it can answer. Anything with side effects goes through a human approval step, so the model never acts on its own.
